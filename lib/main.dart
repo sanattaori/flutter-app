@@ -30,7 +30,9 @@ class RandomWordsState extends State<RandomWords> {
   //The StatefulWidget class is, itself, immutable, but the State class persists over the lifetime of the widget.
   
   final _suggestions = <WordPair>[];
-
+  // Set stores the word pairings that the user favorited. 
+  //Set is preferred to List because a properly implemented Set doesn’t allow duplicate entries.
+  final _saved = new Set<WordPair>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
   
   //ListView that displays the suggested word pairing.
@@ -75,11 +77,27 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
+    //check to ensure that a word pairing hasn’t already been added to favorites.
+    final alreadySaved = _saved.contains(pair);
+
     return new ListTile(
       title: new Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
+      trailing: new Icon(
+      alreadySaved ? Icons.favorite : Icons.favorite_border,
+      color: alreadySaved ? Colors.red : null,
+      ),
+      onTap: () {
+      setState(() {
+        if (alreadySaved) {
+          _saved.remove(pair);
+          } else {
+          _saved.add(pair);
+          }
+        });
+      },
     );
   }
 }
